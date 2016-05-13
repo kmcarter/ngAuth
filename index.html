@@ -15,7 +15,6 @@
       <input type="password" ng-model="main.password" placeholder="Password"><br>
       <br>
 
-      <button ng-click="main.register()">Register</button>
       <button ng-click="main.login()" ng-hide="main.isAuthed()">Login</button>
       <button ng-click="main.logout()" ng-show="main.isAuthed()">Logout</button>
 
@@ -23,6 +22,6 @@
       {{main.message}}
 
       <script src="node_modules/angular/angular.js"></script>
-      <script src="scripts/app.js"></script>
+      <script src="app.js"></script>
     </body>
 </html>

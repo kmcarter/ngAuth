@@ -26,31 +26,31 @@ function authService($window) {
   var self = this;
 
   self.parseJwt = function(token) {
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace('-', '+').replace('_', '/');
-  return JSON.parse($window.atob(base64));
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace('-', '+').replace('_', '/');
+    return JSON.parse($window.atob(base64));
   }
 
   self.saveToken = function(token) {
-  $window.localStorage['jwtToken'] = token;
+    $window.localStorage['jwtToken'] = token;
   }
 
   self.getToken = function() {
-  return $window.localStorage['jwtToken'];
+    return $window.localStorage['jwtToken'];
   }
 
   self.isAuthed = function() {
-  var token = self.getToken();
-  if(token) {
-    var params = self.parseJwt(token);
-    return Math.round(new Date().getTime() / 1000) <= params.exp;
-  } else {
-    return false;
+    var token = self.getToken();
+    if(token) {
+      var params = self.parseJwt(token);
+      return Math.round(new Date().getTime() / 1000) <= params.exp;
+    } else {
+      return false;
     }
   }
 
   self.logout = function() {
-  $window.localStorage.removeItem('jwtToken');
+    $window.localStorage.removeItem('jwtToken');
   }
 }
 
@@ -61,10 +61,10 @@ function userService($http, API, auth) {
   }
 
   self.login = function(email, password) {
-  return $http.post(API + '/authenticate', {
+    return $http.post(API + '/authenticate', {
       email: email,
       password: password
-    })
+    });
   };
 
 }
@@ -74,37 +74,35 @@ function MainCtrl(user, auth) {
 
   function handleRequest(res) {
     var token = res.data ? res.data.token : null;
-    if(token) { console.log('JWT:', token); }
+    if(token) {
+      console.log('JWT:', token);
+    }
     self.message = res.data.message;
   }
 
   self.login = function() {
-    user.login(self.username, self.password)
-      .then(handleRequest, handleRequest)
+    user.login(self.email, self.password)
+      .then(handleRequest, handleRequest);
   }
   self.register = function() {
-    user.register(self.username, self.password)
-      .then(handleRequest, handleRequest)
-  }
-  self.getQuote = function() {
-    user.getQuote()
-      .then(handleRequest, handleRequest)
+    user.register(self.email, self.password)
+      .then(handleRequest, handleRequest);
   }
   self.logout = function() {
-    auth.logout && auth.logout()
+    auth.logout && auth.logout();
   }
   self.isAuthed = function() {
-    return auth.isAuthed ? auth.isAuthed() : false
+    return auth.isAuthed ? auth.isAuthed() : false;
   }
 }
 
 angular.module('ngAuth', [])
-.factory('authInterceptor', authInterceptor)
-.service('user', userService)
-.service('auth', authService)
-.constant('API', 'http://localhost:3000')
-.config(function($httpProvider) {
-  $httpProvider.interceptors.push('authInterceptor');
-})
-.controller('Main', MainCtrl)
+  .factory('authInterceptor', authInterceptor)
+  .service('user', userService)
+  .service('auth', authService)
+  .constant('API', 'http://localhost:3000')
+  .config(function($httpProvider) {
+    $httpProvider.interceptors.push('authInterceptor');
+  })
+  .controller('Main', MainCtrl);
 })();
